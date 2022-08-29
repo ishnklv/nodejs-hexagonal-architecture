@@ -1,0 +1,23 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@src/(.*)$": "<rootDir>/../src/$1",
+    "@modules/(.*)$": "<rootDir>/../src/modules/$1",
+    "@config/(.*)$": "<rootDir>/../src/shared/configs/$1",
+    "@errors": "<rootDir>/../src/shared/errors",
+    "@types": "<rootDir>/../src/shared/types",
+    "@libs/(.*)$": "<rootDir>/../src/shared/$1",
+    "@interfaces/(.*)$": "<rootDir>/../src/interfaces/$1"
+  },
+  "verbose": true
+}

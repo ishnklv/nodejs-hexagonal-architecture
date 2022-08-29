@@ -1,0 +1,689 @@
+openapi: 3.0.0
+paths:
+  /:
+    get:
+      operationId: HelloWorldController_handle
+      summary: Return "Hello World!"
+      description: Returns the string Hello World!
+      parameters:
+        - name: auth-type
+          in: header
+          description: The type of authentication to use. Default is JWT.
+          required: false
+          schema:
+            enum:
+              - jwt
+              - google
+            type: string
+      responses:
+        '200':
+          description: Successful
+      tags:
+        - root
+      security:
+        - bearer: []
+        - google: &ref_0
+            - email
+            - profile
+  /auth/jwt:
+    post:
+      operationId: JwtAuthController_handle
+      summary: Login with jwt
+      description: Login with only the email. No password needed. Not safe for production!
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JwtRequest'
+      responses:
+        '201':
+          description: Successfully authenticated. Returns a jwt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: 'Error: Unauthorized'
+      tags:
+        - auth
+  /auth/google:
+    get:
+      operationId: GoogleAuthController_handle
+      summary: Login with google oauth2
+      description: Login with google oauth2
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - auth
+  /auth/google/callback:
+    get:
+      operationId: GoogleAuthCallbackController_handle
+      summary: The callback for google oauth2
+      description: The callback that is called when the oauth was successful
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - auth
+  /users/{id}:
+    get:
+      operationId: getOneBaseCrudUserControllerUserResponse
+      summary: Retrieve a single UserResponse
+      parameters:
+        - &ref_1
+          name: auth-type
+          in: header
+          description: The type of authentication to use. Default is JWT.
+          required: false
+          schema:
+            enum:
+              - jwt
+              - google
+            type: string
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: fields
+          description: >-
+            Selects resource fields. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#select"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: join
+          description: >-
+            Adds relational resources. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#join"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: cache
+          description: >-
+            Reset cache (if was enabled). <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#cache"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 1
+      responses:
+        '200':
+          description: Get one base response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+      tags: &ref_2
+        - users
+      security: &ref_3
+        - bearer: []
+        - google: *ref_0
+    patch:
+      operationId: updateOneBaseCrudUserControllerUserResponse
+      summary: Update a single UserResponse
+      parameters:
+        - *ref_1
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+      tags: *ref_2
+      security: *ref_3
+    put:
+      operationId: replaceOneBaseCrudUserControllerUserResponse
+      summary: Replace a single UserResponse
+      parameters:
+        - *ref_1
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplaceUserRequest'
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+      tags: *ref_2
+      security: *ref_3
+    delete:
+      operationId: deleteOneBaseCrudUserControllerUserResponse
+      summary: Delete a single UserResponse
+      parameters:
+        - *ref_1
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Delete one base response
+      tags: *ref_2
+      security: *ref_3
+  /users:
+    get:
+      operationId: getManyBaseCrudUserControllerUserResponse
+      summary: Retrieve multiple UserResponses
+      parameters:
+        - *ref_1
+        - name: fields
+          description: >-
+            Selects resource fields. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#select"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: s
+          description: >-
+            Adds search condition. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#search"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: string
+        - name: filter
+          description: >-
+            Adds filter condition. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#filter"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: or
+          description: >-
+            Adds OR condition. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#or"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: sort
+          description: >-
+            Adds sort by field. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#sort"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: join
+          description: >-
+            Adds relational resources. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#join"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: limit
+          description: >-
+            Limit amount of resources. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#limit"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          description: >-
+            Offset amount of resources. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#offset"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: integer
+        - name: page
+          description: >-
+            Page portion of resources. <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#page"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: integer
+        - name: cache
+          description: >-
+            Reset cache (if was enabled). <a
+            href="https://github.com/nestjsx/crud/wiki/Requests#cache"
+            target="_blank">Docs</a>
+          required: false
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            maximum: 1
+      responses:
+        '200':
+          description: Get many base response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/GetManyUserResponseResponseDto'
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/UserResponse'
+      tags: *ref_2
+      security: *ref_3
+    post:
+      operationId: createOneBaseCrudUserControllerUserResponse
+      summary: Create a single UserResponse
+      parameters:
+        - *ref_1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Get create one base response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+      tags: *ref_2
+      security: *ref_3
+  /users/bulk:
+    post:
+      operationId: createManyBaseCrudUserControllerUserResponse
+      summary: Create multiple UserResponses
+      parameters:
+        - *ref_1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateManyUserResponseDto'
+      responses:
+        '201':
+          description: Get create many base response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+      tags: *ref_2
+      security: *ref_3
+  /users/custom:
+    post:
+      operationId: CustomUseCaseController_handle
+      summary: Custom user use case
+      description: Custom user use case
+      parameters:
+        - name: auth-type
+          in: header
+          description: The type of authentication to use. Default is JWT.
+          required: false
+          schema:
+            enum:
+              - jwt
+              - google
+            type: string
+      requestBody:
+        required: true
+        description: The request body for the custom use case
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomUseCaseRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        '400':
+          description: Bad Request. Invalid user input
+      tags:
+        - users
+      security:
+        - bearer: []
+        - google: *ref_0
+  /health:
+    get:
+      operationId: HealthController_handle
+      summary: Get health status
+      description: Get health status of server and database
+      parameters:
+        - name: auth-type
+          in: header
+          description: The type of authentication to use. Default is JWT.
+          required: false
+          schema:
+            enum:
+              - jwt
+              - google
+            type: string
+      responses:
+        '200':
+          description: The Health Check is successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  info:
+                    type: object
+                    example: &ref_4
+                      database: &ref_5
+                        status: up
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+                    nullable: true
+                  error:
+                    type: object
+                    example: {}
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+                    nullable: true
+                  details:
+                    type: object
+                    example: *ref_4
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+        '503':
+          description: The Health Check is not successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  info:
+                    type: object
+                    example: *ref_4
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+                    nullable: true
+                  error:
+                    type: object
+                    example:
+                      redis: &ref_6
+                        status: down
+                        message: Could not connect
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+                    nullable: true
+                  details:
+                    type: object
+                    example:
+                      database: *ref_5
+                      redis: *ref_6
+                    additionalProperties:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                      additionalProperties:
+                        type: string
+      tags:
+        - health
+      security:
+        - bearer: []
+        - google: *ref_0
+info:
+  title: NestJS Template
+  description: The API description of the NestJS Template
+  version: 0.0.1
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      name: JWT
+      description: Authentication via JWT
+      type: http
+    oauth2:
+      type: oauth2
+      flows:
+        implicit:
+          scopes: *ref_0
+      name: Google OAuth2
+      description: OAuth2 with Google
+  schemas:
+    JwtRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: The email of the user to authenticate
+          example: admin@nestjs-template.com
+      required:
+        - email
+    JwtResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          description: The access token for a user
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5AZG9lLmNvbSIsInN1YiI6eyJwcm9wcyI6eyJ2YWx1ZSI6ImFhZTZmNjU0LWY2NjEtNGFjOC1iNzFkLTE4MjBhZjIxNGRjOSJ9fSwiaWF0IjoxNjI1NjQxNTkzfQ.oYkSbM0mroIMOXbw2Z_Lckbk1_EJ0Y1-mzOhVGwphZI
+      required:
+        - access_token
+    GetManyUserResponseResponseDto:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserResponse'
+        count:
+          type: number
+        total:
+          type: number
+        page:
+          type: number
+        pageCount:
+          type: number
+      required:
+        - data
+        - count
+        - total
+        - page
+        - pageCount
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the created entity
+          example: 9a92b1e0-c565-4ab2-8f97-f72d4b98734b
+        createdAt:
+          type: string
+          example: '2020-11-24T17:43:15.970Z'
+        updatedAt:
+          type: string
+          example: '2020-11-24T17:43:15.970Z'
+        name:
+          type: string
+          description: The name of the user
+          example: John Doe
+        email:
+          type: string
+          description: The email address of the user
+          example: john@doe.com
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - name
+        - email
+    CreateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the user
+          example: John Doe
+        email:
+          type: string
+          description: The email address of the user
+          example: john@doe.com
+      required:
+        - name
+        - email
+    CreateManyUserResponseDto:
+      type: object
+      properties:
+        bulk:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateUserRequest'
+      required:
+        - bulk
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the user
+          example: John Doe
+        email:
+          type: string
+          description: The email address of the user
+          example: john@doe.com
+    ReplaceUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the user
+          example: John Doe
+        email:
+          type: string
+          description: The email address of the user
+          example: john@doe.com
+      required:
+        - name
+        - email
+    CustomUseCaseRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the user
+          example: John Doe
+        email:
+          type: string
+          description: The email address of the user
+          example: john@doe.com
+      required:
+        - name
+        - email
+    IdResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The id of the created entity
+          example: 9a92b1e0-c565-4ab2-8f97-f72d4b98734b
+      required:
+        - id

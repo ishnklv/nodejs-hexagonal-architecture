@@ -1,0 +1,14 @@
+entity: UserOrmEntity
+items:
+  admin:
+    id: '9d97c910-2e82-4e68-a768-cf52cb840cdc'
+    createdAt: '2020-08-07T12:29:11.214Z'
+    updatedAt: '2020-08-07T12:29:11.214Z'
+    name: 'Admin'
+    email: 'admin@nestjs-template.com'
+  user1:
+    id: 'aae6f654-f661-4ac8-b71d-1820af214dc9'
+    createdAt: '2020-08-07T12:29:11.214Z'
+    updatedAt: '2020-08-07T12:29:11.214Z'
+    name: 'John Doe'
+    email: 'john@doe.com'
